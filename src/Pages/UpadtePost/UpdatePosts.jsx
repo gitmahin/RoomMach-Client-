@@ -19,6 +19,7 @@ const UpdatePosts = () => {
     name,
     availability,
   } = useLoaderData();
+  console.log(rentAmount);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -76,13 +77,16 @@ const UpdatePosts = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:3000/posts/${_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `https://assigment-10-server-two.vercel.app/posts/${_id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const result = await response.json();
 
@@ -159,7 +163,7 @@ const UpdatePosts = () => {
               type="number"
               id="rentAmount"
               name="rentAmount"
-              value={formData.rentAmount}
+              defaultValue={rentAmount}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
