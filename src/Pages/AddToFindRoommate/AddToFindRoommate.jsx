@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React, { use, useCallback, useEffect, useState } from 'react';
 import { TabTitle } from '../../Layouts/Utils/DynamicTitle/DynamicTitle';
 import { AuthContext } from '../../Provider/AuthProvider/AuthProvider';
 import Swal from 'sweetalert2';
@@ -13,6 +13,7 @@ const AddToFindRoommate = () => {
     lifestylePreferences: [],
     description: '',
     contactInfo: '',
+    photo: '',
     email: '',
     name: '', // Changed from password to name
     availability: 'available',
@@ -30,7 +31,7 @@ const AddToFindRoommate = () => {
     'Social',
   ];
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -40,6 +41,7 @@ const AddToFindRoommate = () => {
 
   const handleCheckboxChange = e => {
     const { value, checked } = e.target;
+    
     setFormData(prev => {
       if (checked) {
         return {
@@ -57,18 +59,22 @@ const AddToFindRoommate = () => {
     });
   };
 
+  useEffect(() => {
+    if(!formData.lifestylePreferences) return
+    console.log(formData.lifestylePreferences.map((item) => item));
+  }, [formData])
+
+
   const handleSubmit = e => {
     e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const postData = Object.fromEntries(formData.entries());
+    console.log(formData)
     // send data form db
     fetch('https://assigment-10-server-two.vercel.app/posts', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify(postData),
+      body: JSON.stringify({...formData, email: user?.email, name: user?.displayName})
     })
       .then(res => res.json())
       .then(data => {
@@ -85,6 +91,14 @@ const AddToFindRoommate = () => {
   };
 
   TabTitle('Hood Happenings | Contact ');
+
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      email: user?.email,
+      name: user?.displayName,
+    }))
+  }, [user])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 md:px-6 py-12 flex flex-col justify-center">
@@ -106,7 +120,7 @@ const AddToFindRoommate = () => {
               onChange={handleChange}
               placeholder="Looking for a roommate in NYC"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              // required
             />
           </div>
 
@@ -122,7 +136,7 @@ const AddToFindRoommate = () => {
               onChange={handleChange}
               placeholder="Neighborhood or address"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              // required
             />
           </div>
 
@@ -137,7 +151,7 @@ const AddToFindRoommate = () => {
               value={formData.rentAmount}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              // required
             />
           </div>
 
@@ -213,7 +227,7 @@ const AddToFindRoommate = () => {
               onChange={handleChange}
               placeholder="Phone number"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              // required
             />
           </div>
           {/* photo */}
@@ -225,9 +239,10 @@ const AddToFindRoommate = () => {
               type="text"
               id="name"
               name="photo"
+              onChange={handleChange}
               placeholder="Your photo Url"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              // required
             />
           </div>
 
@@ -240,11 +255,12 @@ const AddToFindRoommate = () => {
               type="text"
               id="name"
               name="name"
-              value={user?.displayName}
+              value={formData.name}
               onChange={handleChange}
               placeholder="John Doe"
+              disabled
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              // required
             />
           </div>
 
@@ -257,11 +273,12 @@ const AddToFindRoommate = () => {
               type="email"
               id="email"
               name="email"
-              value={user?.email}
+              disabled
+              value={formData.email}
               onChange={handleChange}
               placeholder="your@email.com"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              // required
             />
           </div>
 

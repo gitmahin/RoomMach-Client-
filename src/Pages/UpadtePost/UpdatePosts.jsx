@@ -1,62 +1,50 @@
-import React, { use, useState } from 'react';
-import { TabTitle } from '../../Layouts/Utils/DynamicTitle/DynamicTitle';
-import { AuthContext } from '../../Provider/AuthProvider/AuthProvider';
-import Swal from 'sweetalert2';
-import { useLoaderData } from 'react-router';
+import React, { use, useEffect, useState } from "react";
+import { TabTitle } from "../../Layouts/Utils/DynamicTitle/DynamicTitle";
+import { AuthContext } from "../../Provider/AuthProvider/AuthProvider";
+import Swal from "sweetalert2";
+import { useLoaderData } from "react-router";
 
 const UpdatePosts = () => {
   const { user } = use(AuthContext);
-  const {
-    _id,
-    title,
-    photo,
-    location,
-    rentAmount,
-    roomType,
-    description,
-    contactInfo,
-    email,
-    name,
-    availability,
-  } = useLoaderData();
-  console.log(rentAmount);
+  const getData = useLoaderData();
 
   const [formData, setFormData] = useState({
-    title: '',
-    location: '',
-    rentAmount: '',
-    roomType: 'Single',
+    title: "",
+    location: "",
+    rentAmount: "",
+    roomType: "Single",
     lifestylePreferences: [],
-    description: '',
-    contactInfo: '',
-    email: '',
-    name: '', // Changed from password to name
-    availability: 'available',
+    description: "",
+    contactInfo: "",
+    photo: "",
+    email: "",
+    name: "", // Changed from password to name
+    availability: "available",
   });
 
-  const roomTypes = ['Single', 'Shared', 'Studio', 'Other'];
+  const roomTypes = ["Single", "Shared", "Studio", "Other"];
   const lifestyleOptions = [
-    'Pets allowed',
-    'No pets',
-    'Smoking allowed',
-    'Non-smoking',
-    'Night owl',
-    'Early riser',
-    'Quiet',
-    'Social',
+    "Pets allowed",
+    "No pets",
+    "Smoking allowed",
+    "Non-smoking",
+    "Night owl",
+    "Early riser",
+    "Quiet",
+    "Social",
   ];
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleCheckboxChange = e => {
+  const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
-    setFormData(prev => {
+    setFormData((prev) => {
       if (checked) {
         return {
           ...prev,
@@ -66,23 +54,23 @@ const UpdatePosts = () => {
         return {
           ...prev,
           lifestylePreferences: prev.lifestylePreferences.filter(
-            item => item !== value
+            (item) => item !== value
           ),
         };
       }
     });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const response = await fetch(
-        `https://assigment-10-server-two.vercel.app/posts/${_id}`,
+        `https://assigment-10-server-two.vercel.app/posts/${formData._id}`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
         }
@@ -90,30 +78,35 @@ const UpdatePosts = () => {
 
       const result = await response.json();
 
+      // TODO: DONT DO LIKE THIS
       if (result.modifiedCount > 0) {
         Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Post updated successfully!',
+          icon: "success",
+          title: "Success",
+          text: "Post updated successfully!",
         });
       } else {
         Swal.fire({
-          icon: 'info',
-          title: 'No Changes',
-          text: 'No data was changed.',
+          icon: "info",
+          title: "No Changes",
+          text: "No data was changed.",
         });
       }
     } catch (error) {
-      console.error('Error updating post:', error);
+      console.error("Error updating post:", error);
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Something went wrong while updating!',
+        icon: "error",
+        title: "Error",
+        text: "Something went wrong while updating!",
       });
     }
   };
 
-  TabTitle('Hood Happenings | Contact ');
+  TabTitle("Hood Happenings | Contact ");
+
+  useEffect(() => {
+    setFormData(getData);
+  }, [getData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 md:px-6 py-12 flex flex-col justify-center">
@@ -131,7 +124,7 @@ const UpdatePosts = () => {
               type="text"
               id="title"
               name="title"
-              defaultValue={title}
+              value={formData.title}
               onChange={handleChange}
               placeholder="Looking for a roommate in NYC"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -163,7 +156,7 @@ const UpdatePosts = () => {
               type="number"
               id="rentAmount"
               name="rentAmount"
-              defaultValue={rentAmount}
+              value={formData.rentAmount}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -181,7 +174,7 @@ const UpdatePosts = () => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {roomTypes.map(type => (
+              {roomTypes.map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -194,7 +187,7 @@ const UpdatePosts = () => {
               Lifestyle Preferences
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {lifestyleOptions.map(option => (
+              {lifestyleOptions.map((option) => (
                 <div key={option} className="flex items-center">
                   <input
                     type="checkbox"
@@ -255,6 +248,8 @@ const UpdatePosts = () => {
               type="text"
               id="name"
               name="photo"
+              value={formData.photo}
+              onChange={handleChange}
               placeholder="Your photo Url"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -303,7 +298,7 @@ const UpdatePosts = () => {
                   type="radio"
                   name="availability"
                   value="available"
-                  checked={formData.availability === 'available'}
+                  checked={formData.availability === "available"}
                   onChange={handleChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                 />
@@ -314,7 +309,7 @@ const UpdatePosts = () => {
                   type="radio"
                   name="availability"
                   value="not available"
-                  checked={formData.availability === 'not available'}
+                  checked={formData.availability === "not available"}
                   onChange={handleChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                 />
@@ -334,8 +329,8 @@ const UpdatePosts = () => {
 
       {/* Purple footer bar mimic */}
       <div className="h-20 bg-purple-700 mt-16 rounded-t-xl text-2xl text-white flex items-center justify-center">
-        <h2 className="font-bold" style={{ fontFamily: '-moz-initial' }}>
-          RoomMatch{' '}
+        <h2 className="font-bold" style={{ fontFamily: "-moz-initial" }}>
+          RoomMatch{" "}
         </h2>
       </div>
     </div>

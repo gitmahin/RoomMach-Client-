@@ -14,7 +14,7 @@ const Navbar = () => {
   const { user, userLogout } = use(AuthContext);
   const links = (
     <>
-      <li>
+      <li className='dark:text-white text-black'>
         <NavLink to="/">Home</NavLink>
       </li>
       <li>
