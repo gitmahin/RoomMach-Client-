@@ -55,7 +55,7 @@ const Home = () => {
         </div>
       </section>
       <section>
-        <div className="py-16 bg-white">
+        <div className="py-16 bg-white dark:bg-gray-800 ">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
